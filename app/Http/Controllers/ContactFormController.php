@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Models\ContactForm;
 use Illuminate\Support\Facades\DB;
+use App\Services\CheckFormData;
+use App\Http\Requests\StoreContactForm;
 
 class ContactFormController extends Controller
 {
@@ -14,15 +16,25 @@ class ContactFormController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
         //eloquent
         // $contacts = ContactForm::all();
 
         //クエリビルダ
-        $contacts = DB::table('contact_forms')
-            ->select('id', 'your_name', 'title', 'created_at')
-            ->get();
+        // $contacts = DB::table('contact_forms')
+        //     ->select('id', 'your_name', 'title', 'created_at')
+        //     ->paginate(10);
+
+        $query = DB::table('contact_forms');
+
+        
+
+        $query->select('id', 'your_name', 'title', 'created_at');
+        $query->orderBy('created_at', 'asc');
+        $contacts = $query->paginate(10);
+
 
 
         return view('contact.index', compact('contacts'));
@@ -44,7 +56,7 @@ class ContactFormController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreContactForm $request)
     {
         $contact = new ContactForm;
 
@@ -71,25 +83,9 @@ class ContactFormController extends Controller
     {
         $contact = ContactForm::find($id);
 
-        if($contact->gender === 0) {
-            $gender = '男性';
-        } elseif ($contact->gender === 1) {
-            $gender = '女性';
-        }
+        $gender = CheckFormData::checkGender($contact);
 
-        if ($contact->age === 1) {
-            $age = '~19歳';
-        } elseif($contact->age === 2) {
-            $age = '20歳~29歳';
-        } elseif ($contact->age === 3) {
-            $age = '30歳~39歳';
-        } elseif ($contact->age === 4) {
-            $age = '40歳~49歳';
-        } elseif ($contact->age === 5) {
-            $age = '50歳~59歳';
-        } elseif ($contact->age === 6) {
-            $age = '60歳~';
-        }
+        $age = CheckFormData::checkAge($contact);
 
         return view('contact.show', compact('contact', 'gender', 'age'));
     }
