@@ -14,5 +14,9 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(UserTableSeeder::class);
         $this->call(ContactFormSeeder::class);
+        $this->call(AreaSeeder::class);
+        $this->call(ShopSeeder::class);
+        $this->call(RouteSeeder::class);
+        $this->call(RouteShopSeeder::class);
     }
 }

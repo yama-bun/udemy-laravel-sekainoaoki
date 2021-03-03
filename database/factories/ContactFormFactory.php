@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(ContactForm::class, function (Faker $faker) {
     return [
-        'your_name' => $faker->realText(12),
+        'your_name' => $faker->name(),
         'title' => $faker->realText(50),
         'email' => $faker->unique()->email,
         'url' => $faker->url,
